@@ -610,7 +610,19 @@ footer p{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;c
 let introDone=false;
 setTimeout(()=>{document.getElementById('intro-prog').style.width='100%';},100);
 setTimeout(skipIntro,3200);
-function skipIntro(){if(introDone)return;introDone=true;const i=document.getElementById('intro');i.style.opacity='0';setTimeout(()=>{i.style.display='none';},800);}
+function skipIntro(){
+  if(introDone)return;
+  introDone=true;
+  const i=document.getElementById('intro');
+  i.style.opacity='0';
+  setTimeout(()=>{i.style.display='none';},800);
+
+  // Shuffle and play music exactly when the user clicks to enter!
+  if (playlist.length > 0 && !playing) {
+    playlist.sort(() => Math.random() - 0.5);
+    loadTrack(0);
+  }
+}
 
 const ring=document.getElementById('cr');
 const curEl=document.getElementById('cur');
@@ -810,16 +822,6 @@ playlist = [
     url: "songs/The Dark Knight Main Theme - Hans Zimmer - Masisohanify.mp3" 
   }
 ];
-// Shuffle the playlist and wait 3 seconds before playing
-if (playlist.length > 0) {
-  // Randomly shuffle the playlist
-  playlist.sort(() => Math.random() - 0.5);
-  
-  // Wait 3000 milliseconds (3 seconds) before playing the first track
-  setTimeout(() => {
-    loadTrack(0);
-  }, 3000);
-}
 
 
 
