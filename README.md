@@ -4,8 +4,7 @@ Welcome to the **Batcomputer** — my custom-built, interactive data analytics p
 
 Instead of using a standard template or drag-and-drop website builder, I designed and coded this portfolio from scratch using pure HTML, CSS, and Vanilla JavaScript to reflect my problem-solving mindset and attention to detail.
 
-🌐 **[View the Live Portfolio Here](https://maianandhu.github.io/YOUR-REPO-NAME)** *(Note: Update this link once your site is live!)*
-
+🌐 **[View the Live Portfolio Here](https://maianandhu.github.io/Portfolio/)
 ---
 
 ## 📂 Case Files (Featured Projects)
