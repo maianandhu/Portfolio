@@ -610,19 +610,22 @@ footer p{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;c
 let introDone=false;
 setTimeout(()=>{document.getElementById('intro-prog').style.width='100%';},100);
 setTimeout(skipIntro,3200);
+
 function skipIntro(){
   if(introDone)return;
   introDone=true;
   const i=document.getElementById('intro');
   i.style.opacity='0';
   setTimeout(()=>{i.style.display='none';},800);
+}
 
-  // Shuffle and play music exactly when the user clicks to enter!
+// Listen for the user's VERY FIRST click anywhere on the page to start the music
+document.body.addEventListener('click', () => {
   if (playlist.length > 0 && !playing) {
     playlist.sort(() => Math.random() - 0.5);
     loadTrack(0);
   }
-}
+}, { once: true }); // { once: true } ensures this only fires exactly one time
 
 const ring=document.getElementById('cr');
 const curEl=document.getElementById('cur');
