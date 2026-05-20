@@ -71,9 +71,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:.75rem 3rem;backgrou
 .spotlight{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(201,168,76,.05) 0%,transparent 65%);border-radius:50%;pointer-events:none;z-index:2;transform:translate(-50%,-50%);}
 .flip-wrap{width:190px;height:230px;perspective:1200px;margin-bottom:2.2rem;position:relative;z-index:10;}
 .flip-inner{width:100%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.4,0,.2,1);}
-.flip-wrap:hover .flip-inner{transform:rotateY(180deg);}
+.flip-wrap:hover .flip-inner, .flip-inner.auto-flip {
+  transform: rotateY(180deg);
+}
 .ff2,.fb2{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
-.ff2{border:1px solid var(--g3);}
+.ff2{
+  border:1px solid var(--g3);
+  box-shadow: 0 0 40px rgba(201, 168, 76, 0.4);
+}
 .ff2 img,.fb2 img{width:100%;height:100%;object-fit:cover;object-position:top center;}
 .fb2{transform:rotateY(180deg);border:2px solid var(--g);}
 .fb2::after{content:'I AM VENGEANCE';position:absolute;bottom:0;left:0;right:0;padding:.6rem;font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.25em;text-align:center;color:var(--g);background:rgba(4,4,6,.9);}
@@ -610,22 +615,19 @@ footer p{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;c
 let introDone=false;
 setTimeout(()=>{document.getElementById('intro-prog').style.width='100%';},100);
 setTimeout(skipIntro,3200);
-
 function skipIntro(){
   if(introDone)return;
   introDone=true;
   const i=document.getElementById('intro');
   i.style.opacity='0';
   setTimeout(()=>{i.style.display='none';},800);
-}
 
-// Listen for the user's VERY FIRST click anywhere on the page to start the music
-document.body.addEventListener('click', () => {
+  // Shuffle and play music exactly when the user clicks to enter!
   if (playlist.length > 0 && !playing) {
     playlist.sort(() => Math.random() - 0.5);
     loadTrack(0);
   }
-}, { once: true }); // { once: true } ensures this only fires exactly one time
+}
 
 const ring=document.getElementById('cr');
 const curEl=document.getElementById('cur');
@@ -668,14 +670,18 @@ document.addEventListener('mousemove', e => {
 
 const pcan=document.getElementById('pc');const pctx=pcan.getContext('2d');
 function rPC(){pcan.width=window.innerWidth;pcan.height=window.innerHeight;}rPC();window.addEventListener('resize',rPC);
+
+
 const CHARS='01アナンドBATMAN∞✦◆データ';
-const drops=Array.from({length:90},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,sp:.3+Math.random()*.7,op:Math.random()*.3+.04,sz:8+Math.random()*5,ch:CHARS[Math.floor(Math.random()*CHARS.length)],t:0}));
+const drops=Array.from({length:90},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,sp:.3+Math.random()*.7,op:Math.random()*.3+.04,sz:8+Math.random()*35,ch:CHARS[Math.floor(Math.random()*CHARS.length)],t:0}));
 let rainAnim;
 function rain(){
     pctx.clearRect(0,0,pcan.width,pcan.height);
     drops.forEach(d=>{pctx.fillStyle='rgba(201,168,76,'+d.op+')';pctx.font=d.sz+'px monospace';pctx.fillText(d.ch,d.x,d.y);d.y+=d.sp;d.t++;if(d.t%28===0)d.ch=CHARS[Math.floor(Math.random()*CHARS.length)];if(d.y>pcan.height+10){d.y=-10;d.x=Math.random()*pcan.width;}});
     rainAnim=requestAnimationFrame(rain);
 }
+
+
 const heroObserver = new IntersectionObserver(e => {
     if(e[0].isIntersecting) { if(!rainAnim) rainAnim = requestAnimationFrame(rain); }
     else { cancelAnimationFrame(rainAnim); rainAnim = null; }
@@ -898,6 +904,13 @@ function startGame(){if(gameRunning)return;gameRunning=true;score=0;timeLeft=30;
 function endGame(){clearInterval(gameInterval);clearInterval(timerInterval);gameRunning=false;gctx.fillStyle='#040406';gctx.fillRect(0,0,700,300);gctx.fillStyle='#c9a84c';gctx.font='700 26px Cinzel,serif';gctx.textAlign='center';gctx.fillText('CLEANING COMPLETE',350,120);gctx.font='16px Orbitron,monospace';gctx.fillText('Outliers Removed: '+score,350,158);const g=score>=30?'BATMAN':score>=20?'ROBIN':score>=10?'COMMISSIONER':'ALFRED';gctx.font='14px Cinzel,serif';gctx.fillText('Data Rank: '+g,350,190);document.getElementById('gameMsg').textContent=score>=30?'Perfect dataset. You are the Dark Knight.':'Training continues...';const btn=document.getElementById('gameBtn');btn.style.display='block';btn.textContent='CLEAN AGAIN';}
 gc.addEventListener('click',e=>{if(!gameRunning)return;const r=gc.getBoundingClientRect();const mx=(e.clientX-r.left)*(700/r.width);const my=(e.clientY-r.top)*(300/r.height);targets.forEach(t=>{if(!t.hit&&mx>t.x&&mx<t.x+t.w&&my>t.y&&my<t.y+t.h){t.hit=true;score++;document.getElementById('gscore').textContent=score;spawnExp(e.clientX,e.clientY);}});});
 gctx.fillStyle='#040406';gctx.fillRect(0,0,700,300);gctx.fillStyle='rgba(201,168,76,.3)';gctx.font='14px Cinzel,serif';gctx.textAlign='center';gctx.fillText('Click START TRAINING to begin',350,155);
+// Auto-flip the hero image every 5 seconds (5000 milliseconds)
+setInterval(() => {
+  const flipInner = document.querySelector('.flip-inner');
+  if (flipInner) {
+    flipInner.classList.toggle('auto-flip');
+  }
+}, 5000);
 </script>
 </body>
 </html>
