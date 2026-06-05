@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --g:#c9a84c;--g2:#f0c060;--g3:#7a6128;--blk:#040406;--drk:#0a0a10;--srf:#111118;--brd:#222230;--tp:#e8e4d8;--tm:#6a6a80;--td:#2a2a3a;
+  
+  /* [LOGO UPDATE] 
+     This CSS variable now points to your downloaded SVG file. 
+     Make sure "batmanlogo.svg" is in the exact same folder as this HTML file. */
+  --bat-svg: url("Images/batmanlogo.svg");
+}
+
+html,body{width:100%;background:var(--blk);color:var(--tp);overflow-x:hidden;scroll-behavior:smooth;font-family:Georgia,serif;cursor:none;}
+a,button,.pc2,.phs,.sbox,.skc,.alink,.connect-card,input,.bat-ico,#mp-progress-wrap{cursor:none !important;}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--g3);}
+#cur{position:fixed;pointer-events:none;z-index:9999;mix-blend-mode:screen;}
+#cr{width:38px;height:38px;border:1px solid rgba(201,168,76,.7);border-radius:50%;transform:translate(-50%,-50%);transition:width .15s,height .15s;}
+#cd{width:5px;height:5px;background:var(--g);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+#pc{position:fixed;inset:0;pointer-events:none;z-index:1;}
+#exp{position:fixed;inset:0;pointer-events:none;z-index:50;}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:2000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s;}
+#intro-bat{width:120px;height:72px;background:var(--g);-webkit-mask:var(--bat-svg) no-repeat center / contain;mask:var(--bat-svg) no-repeat center / contain;animation:batPulse 1.5s ease-in-out infinite;}
+#intro-txt{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.5em;color:var(--g);margin-top:2rem;animation:blink 1.2s infinite;}
+#intro-sub{font-family:'Orbitron',monospace;font-size:.45rem;letter-spacing:.3em;color:var(--td);margin-top:.8rem;}
+#intro-bar{width:220px;height:1px;background:var(--brd);margin-top:2rem;overflow:hidden;}
+#intro-prog{height:1px;background:var(--g);width:0;transition:width 2.8s ease;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:.75rem 3rem;background:rgba(4,4,6,.96);border-bottom:1px solid var(--brd);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;transition:border-color .3s;}
+.nl{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.35em;color:var(--g);text-decoration:none;display:flex;align-items:center;gap:.7rem;}
+.nb{display:flex;gap:1.8rem;}
+.nb a{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.2em;color:var(--tm);text-decoration:none;transition:color .3s;position:relative;}
+.nb a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--g);transition:width .3s;}
+.nb a:hover{color:var(--g);}.nb a:hover::after{width:100%;}
+.bat-ico{width:34px;height:20px;background:var(--g);-webkit-mask:var(--bat-svg) no-repeat center / contain;mask:var(--bat-svg) no-repeat center / contain;flex-shrink:0;}
+
+/* MUSIC PLAYER */
+#musicPlayer{position:fixed;bottom:1.5rem;right:1.5rem;z-index:600;background:rgba(10,10,16,.95);border:1px solid var(--g3);backdrop-filter:blur(20px);transition:all .4s cubic-bezier(.4,0,.2,1);width:52px;height:52px;overflow:hidden;border-radius:4px;}
+#musicPlayer.expanded{width:280px;height:auto;}
+#mp-toggle{width:52px;height:52px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+#mp-bat{width:26px;height:15px;background:var(--g);-webkit-mask:var(--bat-svg) no-repeat center / contain;mask:var(--bat-svg) no-repeat center / contain;animation:batPulse 2s infinite;}
+#mp-body{display:none;padding:.8rem;}
+#musicPlayer.expanded #mp-body{display:block;}
+#musicPlayer.expanded #mp-toggle{width:100%;height:42px;border-bottom:1px solid var(--brd);justify-content:space-between;padding:0 .8rem;}
+.mp-title{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.2em;color:var(--g);}
+.mp-close{font-size:.7rem;color:var(--tm);}
+#mp-track-name{font-family:'Cinzel',serif;font-size:.72rem;color:var(--tp);margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#mp-artist{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.15em;color:var(--tm);margin-bottom:.8rem;}
+#mp-progress-wrap{height:2px;background:var(--brd);margin-bottom:.8rem;position:relative;}
+#mp-progress{height:2px;background:linear-gradient(90deg,var(--g3),var(--g));width:0;transition:width .5s linear;}
+.mp-controls{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:.8rem;}
+.mp-btn{background:none;border:none;color:var(--tm);font-size:.9rem;transition:color .2s;padding:.2rem;}
+.mp-btn:hover{color:var(--g);}
+.mp-btn.play{width:32px;height:32px;border:1px solid var(--g3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--g);}
+.mp-btn.play:hover{background:rgba(201,168,76,.1);}
+#mp-playlist{border-top:1px solid var(--brd);padding-top:.6rem;max-height:140px;overflow-y:auto;}
+.mp-song{padding:.35rem .4rem;font-family:'Cinzel',serif;font-size:.6rem;color:var(--tm);transition:all .2s;display:flex;align-items:center;gap:.5rem;border-radius:2px;}
+.mp-song:hover,.mp-song.active{color:var(--g);background:rgba(201,168,76,.06);}
+.mp-song-num{font-family:'Orbitron',monospace;font-size:.45rem;color:var(--td);width:14px;}
+.mp-add{font-family:'Orbitron',monospace;font-size:.45rem;letter-spacing:.15em;color:var(--td);text-align:center;margin-top:.5rem;padding:.4rem;border:1px dashed var(--td);transition:color .2s;}
+.mp-add:hover{color:var(--g3);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7rem 2rem 4rem;position:relative;overflow:hidden;}
+.spotlight{position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(201,168,76,.05) 0%,transparent 65%);border-radius:50%;pointer-events:none;z-index:2;transform:translate(-50%,-50%);}
+.flip-wrap{width:190px;height:230px;perspective:1200px;margin-bottom:2.2rem;position:relative;z-index:10;}
+.flip-inner{width:100%;height:100%;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.4,0,.2,1);}
+.flip-wrap:hover .flip-inner, .flip-inner.auto-flip {
+  transform: rotateY(180deg);
+}
+.ff2,.fb2{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
+.ff2{
+  border:1px solid var(--g3);
+  box-shadow: 0 0 40px rgba(201, 168, 76, 0.4);
+}
+.ff2 img,.fb2 img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+.fb2{transform:rotateY(180deg);border:2px solid var(--g);}
+.fb2::after{content:'I AM VENGEANCE';position:absolute;bottom:0;left:0;right:0;padding:.6rem;font-family:'Cinzel',serif;font-size:.52rem;letter-spacing:.25em;text-align:center;color:var(--g);background:rgba(4,4,6,.9);}
+.flip-tip{position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);font-family:'Orbitron',monospace;font-size:.45rem;letter-spacing:.2em;color:var(--td);white-space:nowrap;}
+.hero-c{position:relative;z-index:10;text-align:center;max-width:740px;}
+.hero-ey{font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.5em;color:var(--g);margin-bottom:1rem;display:block;}
+.hero-nm{font-family:'Cinzel',serif;font-size:clamp(3.2rem,9vw,7rem);font-weight:900;line-height:.9;margin-bottom:.4rem;}
+.hero-nm span{color:var(--g);}
+.hero-rl{font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.4em;color:var(--g);margin-bottom:1.2rem;}
+#typed{font-style:italic;font-size:1.1rem;color:var(--tm);min-height:2.2rem;display:block;margin-bottom:2rem;border-left:2px solid var(--g3);padding-left:1rem;text-align:left;}
+.hbtns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+.btn-g{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;color:#000;background:var(--g);padding:.85rem 2rem;border:none;text-decoration:none;transition:all .25s;position:relative;overflow:hidden;}
+.btn-g:hover{background:var(--g2);}
+.btn-o{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;color:var(--g);background:transparent;padding:.85rem 2rem;border:1px solid var(--g3);text-decoration:none;transition:all .25s;}
+.btn-o:hover{background:rgba(201,168,76,.1);}
+.scroll-arr{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.3rem;z-index:10;}
+.scroll-ln{width:1px;height:45px;background:linear-gradient(to bottom,var(--g3),transparent);animation:pulse 2s infinite;}
+.scroll-lb{font-family:'Orbitron',monospace;font-size:.45rem;letter-spacing:.3em;color:var(--td);}
+
+/* SECTIONS */
+section{padding:6rem 3rem;position:relative;z-index:5;}
+.sl{display:flex;align-items:center;gap:1.2rem;margin-bottom:3.5rem;}
+.sl span{font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.45em;color:var(--g);}
+.sl::after{content:'';flex:1;height:1px;background:var(--brd);}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .6s,transform .6s;}
+.rv.on{opacity:1;transform:translateY(0);}
+
+/* ABOUT */
+.about{background:var(--drk);}
+.ag{display:grid;grid-template-columns:1.3fr 1fr;gap:5rem;align-items:center;}
+.at h2{font-family:'Cinzel',serif;font-size:2.2rem;font-weight:700;line-height:1.1;margin-bottom:1.2rem;}
+.at h2 em{color:var(--g);font-style:normal;}
+.at p{color:var(--tm);margin-bottom:.9rem;font-size:1rem;line-height:1.7;}
+.alinks{display:flex;gap:.7rem;margin-top:1.4rem;flex-wrap:wrap;}
+.alink{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.15em;color:var(--g);text-decoration:none;border:1px solid var(--g3);padding:.4rem .9rem;transition:all .25s;}
+.alink:hover{background:rgba(201,168,76,.12);transform:translateY(-2px);}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.sbox{background:var(--srf);border:1px solid var(--brd);border-top:2px solid var(--g3);padding:1.2rem;transition:all .3s;}
+.sbox:hover{border-top-color:var(--g);transform:translateY(-3px);}
+.sn{font-family:'Orbitron',monospace;font-size:2rem;font-weight:700;color:var(--g);display:block;line-height:1;}
+.sl2{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.3em;text-transform:uppercase;color:var(--tm);margin-top:.3rem;display:block;}
+
+/* SKILLS */
+.sk-tabs{display:flex;border-bottom:1px solid var(--brd);margin-bottom:2rem;}
+.skt{font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--tm);padding:.7rem 1.4rem;border-bottom:2px solid transparent;transition:all .3s;}
+.skt.on,.skt:hover{color:var(--g);border-bottom-color:var(--g);}
+.sk-panel{display:none;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.sk-panel.on{display:grid;}
+.skc{background:var(--srf);border:1px solid var(--brd);padding:1.5rem 1.2rem;position:relative;overflow:hidden;transition:all .3s;}
+.skc:hover{border-color:var(--g3);transform:translateY(-4px);}
+.skc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--g),transparent);transform:translateX(-100%);transition:transform .5s;}
+.skc:hover::before{transform:translateX(0);}
+.ski{font-size:1.3rem;margin-bottom:.6rem;}
+.skn{font-family:'Cinzel',serif;font-size:.78rem;font-weight:600;color:var(--tp);display:block;margin-bottom:.25rem;}
+.skl{font-family:'Orbitron',monospace;font-size:.46rem;letter-spacing:.12em;color:var(--g);margin-bottom:.35rem;display:block;}
+.skd{font-size:.82rem;color:var(--tm);line-height:1.4;}
+.skbw{margin-top:.8rem;height:2px;background:var(--brd);overflow:hidden;}
+.skb{height:2px;background:linear-gradient(90deg,var(--g3),var(--g));width:0;transition:width 1.2s ease;}
+
+/* TERMINAL */
+.terminal{background:#000;border:1px solid var(--g3);padding:1.5rem;font-family:'Orbitron',monospace;font-size:.65rem;margin-top:2rem;}
+.term-header{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--brd);}
+.term-dot{width:8px;height:8px;border-radius:50%;}
+.term-out{color:#4af;min-height:60px;line-height:1.8;margin-bottom:1rem;white-space:pre-wrap;}
+.term-in{display:flex;align-items:center;gap:.5rem;}
+.term-prompt{color:var(--g);}
+#term-input{background:transparent;border:none;color:var(--tp);font-family:'Orbitron',monospace;font-size:.65rem;flex:1;outline:none;}
+
+/* PROJECTS */
+.projects{background:var(--drk);}
+.pf{display:flex;gap:.5rem;margin-bottom:2rem;flex-wrap:wrap;}
+.pfb{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.15em;color:var(--tm);border:1px solid var(--brd);padding:.35rem .85rem;transition:all .3s;background:transparent;}
+.pfb.on,.pfb:hover{color:var(--g);border-color:var(--g3);background:rgba(201,168,76,.07);}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:1.8rem;}
+.pc2{background:var(--srf);border:1px solid var(--brd);overflow:hidden;transition:all .4s;position:relative;}
+.pc2:hover{border-color:var(--g);transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.6);}
+.pc2.wide{grid-column:1/-1;}
+.pv{height:220px;position:relative;overflow:hidden;background:var(--blk);}
+.pc2.wide .pv{height:260px;}
+.pv-img{width:100%;height:100%;object-fit:cover;object-position:top;filter:brightness(.55) saturate(.7);transition:filter .4s,transform .4s;}
+.pc2:hover .pv-img{filter:brightness(.75) saturate(.9);transform:scale(1.04);}
+.pv-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blk) 0%,var(--drk) 50%,var(--blk) 100%);}
+.pv-bat{width:60px;height:36px;background:var(--g3);opacity:.2;-webkit-mask:var(--bat-svg) no-repeat center / contain;mask:var(--bat-svg) no-repeat center / contain;transition:all .5s;}
+.pc2:hover .pv-bat{opacity:.5;transform:scale(1.1);}
+.pv-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,4,6,0) 30%,rgba(4,4,6,.85) 100%);}
+.pv-tag{position:absolute;top:1rem;left:1rem;font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;color:var(--g);border:1px solid var(--g3);padding:.25rem .6rem;background:rgba(4,4,6,.7);backdrop-filter:blur(4px);}
+.pv-title-overlay{position:absolute;bottom:1rem;left:1rem;right:1rem;}
+.pv-title-overlay h3{font-family:'Cinzel',serif;font-size:1.15rem;font-weight:700;color:var(--tp);line-height:1.2;margin-bottom:.3rem;}
+.pv-title-overlay .ptags{display:flex;gap:.35rem;flex-wrap:wrap;}
+.pi{padding:1.4rem;}
+.pd{font-size:.88rem;color:var(--tm);line-height:1.6;margin-bottom:1rem;}
+.badge{font-family:'Orbitron',monospace;font-size:.42rem;letter-spacing:.08em;color:var(--g);border:1px solid var(--g3);padding:.18rem .5rem;}
+.plk{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.18em;color:var(--g);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:gap .25s;}
+.plk:hover{gap:.6rem;}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:2rem;}
+.timeline::before{content:'';position:absolute;left:.5rem;top:0;bottom:0;width:1px;background:var(--brd);}
+.titem{position:relative;margin-bottom:2rem;padding-left:1.5rem;}
+.titem::before{content:'';position:absolute;left:-.95rem;top:.4rem;width:12px;height:12px;background:var(--g3);-webkit-mask:var(--bat-svg) no-repeat center / contain;mask:var(--bat-svg) no-repeat center / contain;transition:background .3s;}
+.titem:hover::before{background:var(--g);}
+.tdate{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;color:var(--g);display:block;margin-bottom:.3rem;}
+.ttitle{font-family:'Cinzel',serif;font-size:1rem;font-weight:600;color:var(--tp);margin-bottom:.3rem;}
+.tdesc{font-size:.88rem;color:var(--tm);line-height:1.5;}
+
+/* PHOTOGRAPHY */
+.phgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
+.phs{aspect-ratio:4/3;background:var(--srf);border:1px solid var(--brd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;overflow:hidden;position:relative;transition:all .3s;}
+.phs:hover{border-color:var(--g3);transform:scale(1.03);}
+.ph-ic{font-size:1.6rem;opacity:.12;}
+.ph-lb{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.18em;color:var(--td);}
+.ph-ig{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.12em;color:var(--g);text-decoration:none;border-bottom:1px solid var(--g3);}
+
+/* GAME */
+#game-wrap{background:var(--blk);border:1px solid var(--g3);padding:1.5rem;}
+#gameCanvas{border:1px solid var(--brd);display:block;margin:0 auto;max-width:100%;}
+.game-ui{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font-family:'Orbitron',monospace;font-size:.55rem;color:var(--g);}
+#gameMsg{font-family:'Cinzel',serif;font-size:.8rem;color:var(--g);margin-top:.8rem;min-height:1.2rem;text-align:center;}
+.game-btn{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.2em;color:#000;background:var(--g);border:none;padding:.5rem 1.2rem;transition:all .3s;margin-top:.6rem;display:block;margin:0 auto;margin-top:.6rem;}
+.game-btn:hover{background:var(--g2);}
+
+/* CONTACT */
+.contact-section{background:var(--drk);}
+.connect-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;max-width:700px;margin:0 auto;}
+.connect-card{background:var(--srf);border:1px solid var(--brd);padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:flex-start;gap:.8rem;text-decoration:none;transition:all .3s;position:relative;overflow:hidden;}
+.connect-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g3),transparent);transform:scaleX(0);transition:transform .4s;}
+.connect-card:hover{border-color:var(--g);transform:translateY(-4px);}
+.connect-card:hover::before{transform:scaleX(1);}
+.cc-icon{font-size:1.6rem;filter:grayscale(1) brightness(1.5);}
+.cc-platform{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:.25em;color:var(--g);}
+.cc-handle{font-family:'Cinzel',serif;font-size:.9rem;color:var(--tp);}
+.cc-desc{font-family:Georgia,serif;font-size:.85rem;color:var(--tm);line-height:1.5;}
+.cc-arrow{position:absolute;top:1.2rem;right:1.2rem;font-size:.8rem;color:var(--g3);transition:all .3s;}
+.connect-card:hover .cc-arrow{color:var(--g);transform:translate(3px,-3px);}
+.email-bar{background:var(--srf);border:1px solid var(--brd);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;max-width:700px;margin:0 auto 1.5rem;}
+.email-lbl{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.3em;color:var(--tm);}
+.email-addr{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--g);}
+.email-copy{font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.2em;color:#000;background:var(--g);border:none;padding:.5rem 1.2rem;transition:all .3s;}
+.email-copy:hover{background:var(--g2);}
+.availability{text-align:center;margin-top:2rem;max-width:700px;margin:2rem auto 0;}
+.avail-badge{display:inline-flex;align-items:center;gap:.6rem;font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--g);border:1px solid var(--g3);padding:.6rem 1.4rem;}
+.avail-dot{width:7px;height:7px;background:#4a9a4a;border-radius:50%;animation:blink 1.5s infinite;}
+
+footer{padding:1.8rem 3rem;border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;position:relative;z-index:5;}
+footer p{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;color:var(--td);}
+
+@keyframes batPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);filter:brightness(1.4);}}
+@keyframes pulse{0%,100%{opacity:.2;}50%{opacity:.8;}}
+@keyframes blink{0%,100%{opacity:.4;}50%{opacity:1;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+@keyframes glitch{0%,88%,100%{clip-path:none;transform:none;}90%{clip-path:polygon(0 10%,100% 10%,100% 40%,0 40%);transform:skewX(-3deg);}93%{clip-path:polygon(0 60%,100% 60%,100% 90%,0 90%);transform:skewX(2deg) translateX(-4px);}95%{clip-path:none;transform:none;}}
+.hero-ey{opacity:0;animation:fadeUp .7s .2s both;}
+.hero-nm{opacity:0;animation:fadeUp .7s .4s both;}
+.hero-rl{opacity:0;animation:fadeUp .7s .6s both;}
+#typed{opacity:0;animation:fadeUp .7s .8s both;}
+.hbtns{opacity:0;animation:fadeUp .7s 1s both;}
+.flip-wrap{opacity:0;animation:fadeUp .9s .1s both;}
+
+/* --- RAINBOW MUSIC ICON --- */
+@keyframes musicRainbow {
+  0% { transform: scale(1); filter: hue-rotate(0deg); }
+  50% { transform: scale(1.1); filter: hue-rotate(180deg) brightness(1.3); }
+  100% { transform: scale(1); filter: hue-rotate(360deg); }
+}
+
+/* =========================================
+   MOBILE RESPONSIVENESS
+========================================= */
+
+/* Disable custom cursor on touch devices (it gets stuck on mobile) */
+@media (hover: none) and (pointer: coarse) {
+  #cur { display: none !important; }
+  *, a, button, .pc2, .phs, .sbox, .skc, .alink, .connect-card { cursor: auto !important; }
+}
+
+@media (max-width: 900px) {
+  /* Adjust Navigation */
+  nav { padding: 1rem 1.5rem; flex-direction: column; gap: 1rem; }
+  .nb { flex-wrap: wrap; justify-content: center; gap: 1rem; }
+  
+  /* Adjust Section Padding */
+  section { padding: 4rem 1.5rem; }
+  .hero { padding: 8rem 1.5rem 3rem; }
+
+  /* Stack Grids into Single Columns */
+  .ag, .pgrid, .connect-grid, .sk-panel.on { 
+    grid-template-columns: 1fr; 
+    gap: 1.5rem; 
+  }
+  
+  /* Specific Section Tweaks */
+  .sgrid { grid-template-columns: repeat(2, 1fr); }
+  .phgrid { grid-template-columns: repeat(2, 1fr); }
+  
+  /* Typography Scaling */
+  .hero-nm { font-size: clamp(2.5rem, 12vw, 4rem); }
+  .at h2 { font-size: 1.8rem; }
+  
+  /* Hero Flip Card */
+  .flip-wrap { width: 140px; height: 170px; margin-bottom: 1.5rem; }
+  
+  /* Terminal / Game Adjustments */
+  .terminal { padding: 1rem; font-size: 0.55rem; }
+  #term-input { width: 100%; }
+  
+  /* Contact Section */
+  .email-bar { 
+    flex-direction: column; 
+    text-align: center; 
+    gap: 1rem; 
+    padding: 1.2rem;
+  }
+}
+
+@media (max-width: 500px) {
+  /* Ultra-small screens */
+  .sgrid { grid-template-columns: 1fr; }
+  .phgrid { grid-template-columns: 1fr; }
+  .nb a { font-size: 0.45rem; letter-spacing: 0.1em; }
+  .hero-ey { font-size: 0.45rem; letter-spacing: 0.2em; }
+  .hbtns { flex-direction: column; width: 100%; }
+  .btn-g, .btn-o { width: 100%; text-align: center; }
+  
+  /* Keep Music Player inside screen bounds */
+  #musicPlayer.expanded { width: calc(100vw - 3rem); right: 1.5rem; }
+}
+/* --- BAT-LOGO OVERRIDE (RESTORED & FIXED) --- */
+/* Bypasses local file blocks and displays the colored SVG */
+#intro-bat, .bat-ico, #mp-bat, .pv-bat, .titem::before {
+  -webkit-mask: none !important;
+  mask: none !important;
+  background: var(--bat-svg) no-repeat center / contain !important;
+}
+
+/* Nav & Footer - fixed size */
+.bat-ico { 
+  width: 70px !important; 
+  height: 40px !important; 
+} 
+
+/* Music Player - FIXED from 500px to normal size so it doesn't look like an oval */
+#mp-bat { 
+  width: 40px !important; 
+  height: 25px !important; 
+} 
+
+/* Timeline Icons - properly centered */
+.titem::before { 
+  width: 20px !important; 
+  height: 20px !important; 
+  left: -1.2rem !important; 
+  top: 0.2rem !important; 
+}
+</style>
+</head>
+<body>
+
+<div id="intro" onclick="skipIntro()">
+  <div id="intro-bat"></div>
+  <p id="intro-txt">Click to enter Gotham</p>
+  <p id="intro-sub">Anand Saundarya · Data Analyst Portfolio</p>
+  <div id="intro-bar"><div id="intro-prog"></div></div>
+</div>
+
+<canvas id="pc"></canvas>
+<canvas id="exp"></canvas>
+<div id="cur"><div id="cr"></div><div id="cd"></div></div>
+
+<div id="musicPlayer">
+  <div id="mp-toggle" onclick="togglePlayer()">
+    <div id="mp-icon" style="font-size: 1.4rem; animation: musicRainbow 4s linear infinite; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">🎵</div>
+  </div>
+  <div id="mp-body">
+    <p id="mp-track-name">No track loaded</p>
+    <p id="mp-artist">Add your songs below</p>
+    <div id="mp-progress-wrap" onclick="seekTrack(event)">
+      <div id="mp-progress"></div>
+    </div>
+    <div class="mp-controls">
+      <button class="mp-btn" onclick="prevTrack()" title="Previous">⏮</button>
+      <button class="mp-btn play" id="mp-play-btn" onclick="togglePlay()">▶</button>
+      <button class="mp-btn" onclick="nextTrack()" title="Next">⏭</button>
+      <input type="range" min="0" max="1" step="0.05" value="0.7" id="mp-vol" oninput="setVol(this.value)" style="width:60px;"/>
+    </div>
+    <div id="mp-playlist">
+      <div class="mp-add" onclick="document.getElementById('mp-file').click()">
+        ＋ Add songs from your device
+      </div>
+      <input type="file" id="mp-file" accept="audio/*" multiple style="display:none" onchange="loadFiles(event)"/>
+      <p style="font-family:'Orbitron',monospace;font-size:.42rem;letter-spacing:.1em;color:var(--td);text-align:center;margin-top:.5rem;line-height:1.6;">Or drop .mp3/.m4a files here<br>YouTube ➜ download via yt-dlp or ytmp3.cc</p>
+    </div>
+  </div>
+</div>
+
+<nav id="mainNav">
+  <a href="#hero" class="nl"><div class="bat-ico" id="batLogo"></div>Anand Saundarya</a>
+  <div class="nb">
+    <a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a>
+    <a href="#timeline">Journey</a><a href="#game">Bat-Game</a><a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="spotlight" id="sp"></div>
+  
+  <div class="flip-wrap">
+    <div class="flip-inner">
+      <div class="ff2">
+        <img src="Images/me.png" alt="Anand" onerror="this.parentElement.style.background='#1a1a24';this.remove()"/>
+      </div>
+      <div class="fb2">
+        <img src="Images/batman.png" alt="Batman" onerror="this.parentElement.style.background='#0a0a10';this.remove()"/>
+      </div>
+    </div>
+    <span class="flip-tip">Hover — reveal the dark side</span>
+  </div>
+
+  <div class="hero-c">
+    <span class="hero-ey">Data Analyst · Gotham-Grade Intelligence</span>
+    <h1 class="hero-nm" style="animation:fadeUp .7s .4s both,glitch 10s 3s infinite;">Anand<br><span>Saundarya</span></h1>
+    <p class="hero-rl">SQL · Python · Power BI · Excel</p>
+    <span id="typed"></span>
+    <div class="hbtns">
+      <a class="btn-g" href="#projects">View Case Files</a>
+      <a class="btn-o" href="#contact">Send The Signal</a>
+    </div>
+  </div>
+  <div class="scroll-arr" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">
+    <div class="scroll-ln"></div><span class="scroll-lb">Scroll</span>
+  </div>
+</section>
+
+<section class="about rv" id="about">
+  <div class="sl"><span>001 — The Analyst</span></div>
+  <div class="ag">
+    <div class="at">
+      <h2>From Pune to<br><em>Gotham's</em> Databases</h2>
+      <p>B.Tech Computer Science graduate (2025, DBATU) — relentlessly extracting truth from data. Like a certain Dark Knight, I work best when the numbers are messy and the answers are buried deep.</p>
+      <p>Targeting data analyst roles in Japan. Armed with JLPT N4, business-level English, and an obsession with precision. Actively levelling up to N3.</p>
+      <p style="color:var(--g);font-style:italic;font-size:.95rem;">"It's not who I am underneath, but what my dashboards reveal that defines me."</p>
+      <div class="alinks">
+        <a class="alink" href="https://www.linkedin.com/in/anandsaundarya/" target="_blank">⟶ LinkedIn</a>
+        <a class="alink" href="https://github.com/maianandhu" target="_blank">⟶ GitHub</a>
+        <a class="alink" href="https://www.instagram.com/_anonymous_13s/" target="_blank">⟶ Instagram</a>
+        <a class="alink" href="mailto:saundaryaanand2003@gmail.com">⟶ Email</a>
+      </div>
+    </div>
+    <div class="sgrid">
+      <div class="sbox rv"><span class="sn" id="c1">0</span><span class="sl2">Major Projects</span></div>
+      <div class="sbox rv"><span class="sn" id="c2">0</span><span class="sl2">Records Analysed</span></div>
+      <div class="sbox rv"><span class="sn">N4</span><span class="sl2">JLPT Certified</span></div>
+      <div class="sbox rv"><span class="sn">∞</span><span class="sl2">Curiosity</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills" style="background:var(--blk);">
+  <div class="sl"><span>002 — Arsenal</span></div>
+  <div class="sk-tabs">
+    <div class="skt on" onclick="skTab(this,'tech')">Technical</div>
+    <div class="skt" onclick="skTab(this,'lang')">Languages</div>
+    <div class="skt" onclick="skTab(this,'cert')">Certifications</div>
+  </div>
+  <div class="sk-panel on" id="sk-tech">
+    <div class="skc rv"><div class="ski">🗃️</div><span class="skn">SQL / MySQL</span><span class="skl">★★★★☆ Advanced</span><p class="skd">JOINs, Window Functions, CASE WHEN, Subqueries, Data Cleaning</p><div class="skbw"><div class="skb" data-w="88"></div></div></div>
+    <div class="skc rv"><div class="ski">📊</div><span class="skn">Power BI / DAX</span><span class="skl">★★★★☆ Advanced</span><p class="skd">Star Schema Modeling, Interactive Dashboards, KPI Cards</p><div class="skbw"><div class="skb" data-w="85"></div></div></div>
+    <div class="skc rv"><div class="ski">🐍</div><span class="skn">Python</span><span class="skl">★★★☆☆ Proficient</span><p class="skd">Pandas, NumPy, EDA, Matplotlib, Seaborn, API Integration</p><div class="skbw"><div class="skb" data-w="72"></div></div></div>
+    <div class="skc rv"><div class="ski">📋</div><span class="skn">Excel</span><span class="skl">★★★★☆ Advanced</span><p class="skd">Pivot Tables, XLOOKUP, INDEX-MATCH, Conditional Formatting</p><div class="skbw"><div class="skb" data-w="87"></div></div></div>
+    <div class="skc rv"><div class="ski">🐙</div><span class="skn">Git / GitHub</span><span class="skl">★★★☆☆ Proficient</span><p class="skd">Version control, project publishing, repository management</p><div class="skbw"><div class="skb" data-w="68"></div></div></div>
+    <div class="skc rv"><div class="ski">☁️</div><span class="skn">Google Sheets</span><span class="skl">★★★☆☆ Proficient</span><p class="skd">Formulas, dashboards, CRM data management</p><div class="skbw"><div class="skb" data-w="75"></div></div></div>
+  </div>
+  <div class="sk-panel" id="sk-lang">
+    <div class="skc"><div class="ski">🇬🇧</div><span class="skn">English</span><span class="skl">Business Level</span><p class="skd">Full professional proficiency — reading, writing, speaking</p><div class="skbw"><div class="skb" style="width:90%"></div></div></div>
+    <div class="skc"><div class="ski">🇯🇵</div><span class="skn">Japanese</span><span class="skl">JLPT N4 · N3 in progress</span><p class="skd">Daily conversational. Actively improving toward N3.</p><div class="skbw"><div class="skb" style="width:52%"></div></div></div>
+    <div class="skc"><div class="ski">🇮🇳</div><span class="skn">Hindi / Marathi</span><span class="skl">Native</span><p class="skd">Native fluency in both Hindi and Marathi</p><div class="skbw"><div class="skb" style="width:100%"></div></div></div>
+  </div>
+  <div class="sk-panel" id="sk-cert">
+    <div class="skc"><span class="skn">Google Data Analytics</span><span class="skl">Google / Coursera · 2024</span><p class="skd">Professional Certificate — data analysis, visualisation, SQL</p></div>
+    <div class="skc"><span class="skn">Data Analytics Simulation</span><span class="skl">Deloitte Australia · 2024</span><p class="skd">Forage Job Simulation — real-world analytics workflow</p></div>
+    <div class="skc"><span class="skn">JLPT N4</span><span class="skl">Japan Foundation · DEC 2025</span><p class="skd">Japanese Language Proficiency — daily conversational level</p></div>
+  </div>
+  <div class="terminal rv" style="margin-top:3rem;">
+    <div class="term-header">
+      <div class="term-dot" style="background:#ff5f57"></div>
+      <div class="term-dot" style="background:#febc2e"></div>
+      <div class="term-dot" style="background:#28c840"></div>
+      <span style="font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:.2em;color:var(--tm);margin-left:.5rem;">BATCOMPUTER v2.0 — Anand Saundarya</span>
+    </div>
+    <div class="term-out" id="term-out">Type a command. Try: <span style="color:var(--g)">help</span></div>
+    <div class="term-in">
+      <span class="term-prompt">bat@gotham:~$</span>
+      <input id="term-input" placeholder="type a command..." onkeydown="termKey(event)" autocomplete="off" spellcheck="false"/>
+    </div>
+  </div>
+</section>
+
+<section class="projects rv" id="projects">
+  <div class="sl"><span>003 — Case Files</span></div>
+  <div class="pf">
+    <button class="pfb on" onclick="fProj(this,'all')">All</button>
+    <button class="pfb" onclick="fProj(this,'powerbi')">Power BI</button>
+    <button class="pfb" onclick="fProj(this,'sql')">SQL</button>
+    <button class="pfb" onclick="fProj(this,'python')">Python</button>
+    <button class="pfb" onclick="fProj(this,'excel')">Excel</button>
+  </div>
+  <div class="pgrid">
+    <div class="pc2 rv" data-tags="powerbi,excel">
+      <div class="pv">
+        <img class="pv-img" src="Images/TourismDashboard.png" alt="Tourism Dashboard" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="pv-fallback" style="display:none"><div class="pv-bat"></div></div>
+        <div class="pv-overlay"></div>
+        <span class="pv-tag">Featured · Power BI · 2024</span>
+        <div class="pv-title-overlay">
+          <h3>Global Tourism Analytics Dashboard</h3>
+          <div class="ptags"><span class="badge">Power BI</span><span class="badge">DAX</span><span class="badge">Excel</span><span class="badge">Star Schema</span></div>
+        </div>
+      </div>
+      <div class="pi">
+        <p class="pd">Analysed 10,000+ traveller records across 20+ countries $55.35M in revenue trends (2019–2024). Interactive dashboards with time-series, geo-maps, KPIs across 35 data dimensions.</p>
+        <a href="https://github.com/maianandhu/Global-Tourism-Analytics" class="plk" target="_blank">View on GitHub →</a>
+      </div>
+    </div>
+    <div class="pc2 rv" data-tags="sql">
+      <div class="pv">
+        <img class="pv-img" src="Images/skyhighanalytics.png" alt="Airline Analysis" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="pv-fallback" style="display:none"><div class="pv-bat"></div></div>
+        <div class="pv-overlay"></div>
+        <span class="pv-tag">MySQL · 2024</span>
+        <div class="pv-title-overlay">
+          <h3>Airline Booking & Passenger Trends</h3>
+          <div class="ptags"><span class="badge">MySQL</span><span class="badge">JOINs</span><span class="badge">Window Functions</span></div>
+        </div>
+      </div>
+      <div class="pi">
+        <p class="pd">5,000 bookings across 3 relational tables. Business Class = 4× Economy revenue. Lufthansa #1 at ₹2.16Cr across 5 airlines.</p>
+        <a href="https://github.com/maianandhu/SkyHigh-Analytics" class="plk" target="_blank">View on GitHub →</a>
+      </div>
+    </div>
+    <div class="pc2 rv" data-tags="powerbi,python">
+      <div class="pv">
+        <img class="pv-img" src="Images/csnairquality.png" alt="Air Quality Dashboard" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="pv-fallback" style="display:none"><div class="pv-bat"></div></div>
+        <div class="pv-overlay"></div>
+        <span class="pv-tag">Power BI + Python · 2025</span>
+        <div class="pv-title-overlay">
+          <h3>CSN Air Quality Dashboard</h3>
+          <div class="ptags"><span class="badge">Power BI</span><span class="badge">Python</span><span class="badge">REST API</span><span class="badge">Pandas</span></div>
+        </div>
+      </div>
+      <div class="pi">
+        <p class="pd">Ingested PM2.5, NO₂ & O₃ via Open-Meteo API. CPCB-standard AQI dashboard identifying critical pollution periods and seasonal patterns.</p>
+        <a href="https://github.com/maianandhu/CSN-Air-Quality-Dashboard" class="plk" target="_blank">View on GitHub →</a>
+      </div>
+    </div>
+    <div class="pc2 rv" data-tags="excel">
+      <div class="pv">
+        <img class="pv-img" src="Images/SpotifyDashboard.png" alt="Spotify Dashboard" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <div class="pv-fallback" style="display:none"><div class="pv-bat"></div></div>
+        <div class="pv-overlay"></div>
+        <span class="pv-tag">Excel · 2024</span>
+        <div class="pv-title-overlay">
+          <h3>Spotify Streaming Trends Dashboard</h3>
+          <div class="ptags"><span class="badge">Excel</span><span class="badge">Power Query</span><span class="badge">DAX</span></div>
+        </div>
+      </div>
+      <div class="pi">
+        <p class="pd">Analysed 950+ top-streamed tracks to uncover global hit patterns. Built an interactive dashboard using Excel, Power Query, and DAX to evaluate platform exposure and audio features.</p>
+        <a href="https://github.com/maianandhu/Spotify_DASHBOARD" class="plk" target="_blank">View on GitHub →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline" style="background:var(--blk);">
+  <div class="sl"><span>004 — The Journey</span></div>
+  <div class="timeline rv">
+    <div class="titem"><span class="tdate">Feb 2003</span><div class="ttitle">Gotham Origin</div><p class="tdesc">Born in India. The story begins.</p></div>
+    <div class="titem"><span class="tdate">Apr 2021</span><div class="ttitle">Entered the Academy</div><p class="tdesc">Joined P.E.S. College of Engineering — B.Tech Computer Science (DBATU).</p></div>
+    <div class="titem"><span class="tdate">2024</span><div class="ttitle">Arsenal Unlocked</div><p class="tdesc">Google Data Analytics Certificate · Deloitte Forage Simulation · JLPT N4. Skills sharpened.</p></div>
+    <div class="titem"><span class="tdate">2024</span><div class="ttitle">First Case Files</div><p class="tdesc">Built Global Tourism Dashboard, Airline Analytics & Air Quality systems — 10,000+ records analysed.</p></div>
+    <div class="titem"><span class="tdate">Sep–Oct 2025</span><div class="ttitle">First Mission</div><p class="tdesc">Interned at High Profile Tours cleaned 1,000+ customer records, automated daily KPI reports.</p></div>
+    <div class="titem"><span class="tdate">May 2025</span><div class="ttitle">Graduated</div><p class="tdesc">B.Tech Computer Science & Engineering — P.E.S. College of Engineering, DBATU.</p></div>
+    <div class="titem"><span class="tdate">Now</span><div class="ttitle">Next Mission: Japan 🇯🇵</div><p class="tdesc">Targeting data analyst roles in Japan. JLPT N3 in progress. The dark knight never stops.</p></div>
+  </div>
+</section>
+
+<section id="photography" style="background:var(--drk);">
+  <div class="sl"><span>005 — Through the Lens</span></div>
+  <p style="color:var(--tm);font-size:.95rem;margin-bottom:2rem;max-width:480px;">Photography isn't just a hobby,it's how a data analyst frames the world. Follow <a href="https://www.instagram.com/_anonymous_13s/" target="_blank" style="color:var(--g);">@_anonymous_13s</a> on Instagram.</p>
+  --
+ <div class="phgrid">
+    
+    <div class="phs rv" onclick="window.open('https://www.instagram.com/p/C_3hQOuSwUE/?img_index=1','_blank')">
+      <img src="Images/1.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:brightness(0.5); transition:0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.5)'"/>
+      <a class="ph-ig" style="position:relative; z-index:1; margin-top:auto; margin-bottom:1rem; background:rgba(4,4,6,0.7); padding:4px 8px; border-radius:2px;"></a>
+    </div>
+
+    <div class="phs rv" onclick="window.open('https://www.instagram.com/p/C6s93llyj51/?img_index=1','_blank')">
+      <img src="Images/2.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:brightness(0.5); transition:0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.5)'"/>
+      <a class="ph-ig" style="position:relative; z-index:1; margin-top:auto; margin-bottom:1rem; background:rgba(4,4,6,0.7); padding:4px 8px; border-radius:2px;"></a>
+    </div>
+
+    <div class="phs rv" onclick="window.open('https://www.instagram.com/p/C4F0m9zM2rK/?img_index=1','_blank')">
+      <img src="Images/3.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:brightness(0.5); transition:0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.5)'"/>
+      <a class="ph-ig" style="position:relative; z-index:1; margin-top:auto; margin-bottom:1rem; background:rgba(4,4,6,0.7); padding:4px 8px; border-radius:2px;"></a>
+    </div>
+
+    <div class="phs rv" onclick="window.open('https://www.instagram.com/p/Cy5_kVRpH3y/?img_index=1','_blank')">
+      <img src="Images/4.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:brightness(0.5); transition:0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.5)'"/>
+      <a class="ph-ig" style="position:relative; z-index:1; margin-top:auto; margin-bottom:1rem; background:rgba(4,4,6,0.7); padding:4px 8px; border-radius:2px;"></a>
+    </div>
+
+    <div class="phs rv" onclick="window.open('https://www.instagram.com/p/CncVzfUMLf9/?img_index=1','_blank')">
+      <img src="Images/5.jpeg" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; filter:brightness(0.5); transition:0.4s;" onmouseover="this.style.filter='brightness(1)'" onmouseout="this.style.filter='brightness(0.5)'"/>
+      <a class="ph-ig" style="position:relative; z-index:1; margin-top:auto; margin-bottom:1rem; background:rgba(4,4,6,0.7); padding:4px 8px; border-radius:2px;"></a>
+    </div>
+
+    <div class="phs rv" style="border-color:var(--g3); background:var(--drk);" onclick="window.open('https://www.instagram.com/_anonymous_13s/','_blank')">
+      <span style="font-family:'Cinzel',serif;font-size:.65rem;color:var(--g);">See All</span>
+      <a class="ph-ig" style="font-size:.65rem; border:none; margin-top:0.4rem;">@_anonymous_13s ↗</a>
+    </div>
+    
+  </div>
+</section>
+
+<section id="game" style="background:var(--blk);">
+  <div class="sl"><span>006 — Data Training</span></div>
+  <p style="color:var(--tm);font-size:.9rem;margin-bottom:1.5rem;">Click the data anomalies (outliers) before they corrupt the database. Batman never misses.</p>
+  <div id="game-wrap">
+    <div class="game-ui">
+      <span>CLEANED: <span id="gscore" style="color:var(--g2)">0</span></span>
+      <span>TIME: <span id="gtime" style="color:var(--g2)">30</span>s</span>
+      <span>SERVER LOAD: <span id="glvl" style="color:var(--g2)">1</span></span>
+    </div>
+    <canvas id="gameCanvas" width="700" height="300"></canvas>
+    <div id="gameMsg">Click START to begin data cleaning</div>
+    <button class="game-btn" id="gameBtn" onclick="startGame()">START TRAINING</button>
+  </div>
+</section>
+
+<section class="contact-section rv" id="contact">
+  <div class="sl"><span>007 — Send The Signal</span></div>
+  <div class="email-bar rv">
+    <div>
+      <div class="email-lbl">Direct Line</div>
+      <div class="email-addr">saundaryaanand2003@gmail.com</div>
+    </div>
+    <button class="email-copy" id="copyBtn" onclick="copyEmail()">Copy Email</button>
+  </div>
+  <div class="connect-grid rv">
+    <a class="connect-card" href="https://www.linkedin.com/in/anandsaundarya/" target="_blank">
+      <span class="cc-icon">💼</span>
+      <span class="cc-platform">LinkedIn</span>
+      <span class="cc-handle">Anand Saundarya</span>
+      <span class="cc-desc">Professional profile · data projects · career updates</span>
+      <span class="cc-arrow">↗</span>
+    </a>
+    <a class="connect-card" href="https://github.com/maianandhu" target="_blank">
+      <span class="cc-icon">🐙</span>
+      <span class="cc-platform">GitHub</span>
+      <span class="cc-handle">@maianandhu</span>
+      <span class="cc-desc">Source code for all case files · open to collaboration</span>
+      <span class="cc-arrow">↗</span>
+    </a>
+    <a class="connect-card" href="https://www.instagram.com/_anonymous_13s/" target="_blank">
+      <span class="cc-icon">📷</span>
+      <span class="cc-platform">Instagram</span>
+      <span class="cc-handle">@_anonymous_13s</span>
+      <span class="cc-desc">Photography · street shots · visual storytelling</span>
+      <span class="cc-arrow">↗</span>
+    </a>
+    <a class="connect-card" href="mailto:saundaryaanand2003@gmail.com">
+      <span class="cc-icon">🦇</span>
+      <span class="cc-platform">Email</span>
+      <span class="cc-handle">Activate the Bat-Signal</span>
+      <span class="cc-desc">For job opportunities · data consulting · collaborations</span>
+      <span class="cc-arrow">↗</span>
+    </a>
+  </div>
+  <div class="availability rv">
+    <div class="avail-badge">
+      <div class="avail-dot"></div>
+      Available for opportunities · Open to Japan-based roles
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Anand Saundarya · Pune, India</p>
+  <div class="bat-ico"></div>
+  <p>saundaryaanand2003@gmail.com</p>
+</footer>
+
+<script>
+let introDone=false;
+setTimeout(()=>{document.getElementById('intro-prog').style.width='100%';},100);
+//setTimeout(skipIntro,3200);
+function skipIntro(){
+  if(introDone)return;
+  introDone=true;
+  const i=document.getElementById('intro');
+  i.style.opacity='0';
+  setTimeout(()=>{i.style.display='none';},800);
+
+  // Shuffle and play music exactly when the user clicks to enter!
+  if (playlist.length > 0 && !playing) {
+    playlist.sort(() => Math.random() - 0.5);
+    loadTrack(0);
+  }
+}
+
+const ring=document.getElementById('cr');
+const curEl=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{curEl.style.left=e.clientX+'px';curEl.style.top=e.clientY+'px';});
+document.querySelectorAll('a,button,.pc2,.phs,.sbox,.skc,.alink,.connect-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='60px';ring.style.height='60px';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='38px';ring.style.height='38px';});
+});
+
+// --- BAT TRAIL EFFECT ---
+let lastBatX = 0;
+let lastBatY = 0;
+
+document.addEventListener('mousemove', e => {
+  const dist = Math.hypot(e.clientX - lastBatX, e.clientY - lastBatY);
+  if (dist > 40) {
+    lastBatX = e.clientX;
+    lastBatY = e.clientY;
+    const batTrail = document.createElement('div');
+    batTrail.style.position = 'fixed';
+    batTrail.style.left = e.clientX + 'px';
+    batTrail.style.top = e.clientY + 'px';
+    batTrail.style.width = '20px';
+    batTrail.style.height = '12px';
+    batTrail.style.background = 'url("Images/batmanlogo.svg") no-repeat center / contain';
+    batTrail.style.pointerEvents = 'none';
+    batTrail.style.zIndex = '9998';
+    batTrail.style.transform = 'translate(-50%, -50%) scale(1)';
+    batTrail.style.transition = 'transform 0.8s ease-out, opacity 0.8s ease-out';
+    batTrail.style.opacity = '0.5';
+    document.body.appendChild(batTrail);
+    requestAnimationFrame(() => {
+      batTrail.style.transform = 'translate(-50%, 30px) scale(0.2)';
+      batTrail.style.opacity = '0';
+    });
+    setTimeout(() => batTrail.remove(), 800);
+  }
+});
+// --- END BAT TRAIL EFFECT ---
+
+const pcan=document.getElementById('pc');const pctx=pcan.getContext('2d');
+function rPC(){pcan.width=window.innerWidth;pcan.height=window.innerHeight;}rPC();window.addEventListener('resize',rPC);
+
+
+const CHARS='01アナンドBATMAN∞✦◆データ';
+const drops=Array.from({length:90},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,sp:.3+Math.random()*.7,op:Math.random()*.3+.04,sz:8+Math.random()*35,ch:CHARS[Math.floor(Math.random()*CHARS.length)],t:0}));
+let rainAnim;
+function rain(){
+    pctx.clearRect(0,0,pcan.width,pcan.height);
+    drops.forEach(d=>{pctx.fillStyle='rgba(201,168,76,'+d.op+')';pctx.font=d.sz+'px monospace';pctx.fillText(d.ch,d.x,d.y);d.y+=d.sp;d.t++;if(d.t%28===0)d.ch=CHARS[Math.floor(Math.random()*CHARS.length)];if(d.y>pcan.height+10){d.y=-10;d.x=Math.random()*pcan.width;}});
+    rainAnim=requestAnimationFrame(rain);
+}
+
+
+const heroObserver = new IntersectionObserver(e => {
+    if(e[0].isIntersecting) { if(!rainAnim) rainAnim = requestAnimationFrame(rain); }
+    else { cancelAnimationFrame(rainAnim); rainAnim = null; }
+});
+heroObserver.observe(document.getElementById('hero'));
+
+const ecan=document.getElementById('exp');const ectx=ecan.getContext('2d');
+ecan.width=window.innerWidth;ecan.height=window.innerHeight;
+window.addEventListener('resize',()=>{ecan.width=window.innerWidth;ecan.height=window.innerHeight;});
+let exP=[];
+function spawnExp(x,y){for(let i=0;i<22;i++){const a=Math.random()*Math.PI*2;const s=2+Math.random()*5;exP.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:1,sz:2+Math.random()*4,col:Math.random()>.5?'#c9a84c':'#f0c060'});}}
+(function eloop(){ectx.clearRect(0,0,ecan.width,ecan.height);exP=exP.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.12;p.life-=.025;ectx.globalAlpha=p.life;ectx.fillStyle=p.col;ectx.beginPath();ectx.arc(p.x,p.y,p.sz*p.life,0,Math.PI*2);ectx.fill();return p.life>0;});ectx.globalAlpha=1;requestAnimationFrame(eloop);})();
+
+const spEl=document.getElementById('sp');
+document.querySelector('.hero').addEventListener('mousemove',e=>{const r=e.currentTarget.getBoundingClientRect();spEl.style.left=(e.clientX-r.left)+'px';spEl.style.top=(e.clientY-r.top)+'px';});
+
+const phrases=["I don't just analyse data — I extract truth from the dark.","Every number tells a story. I find it.","SQL. Python. Power BI. Precision.","From Pune to Gotham's databases.","Turning chaos into clarity, one query at a time."];
+let pi=0,ci=0,fwd=true,wait=false;const tel=document.getElementById('typed');
+function typeLoop(){if(wait)return;if(fwd){if(ci<=phrases[pi].length){tel.textContent=phrases[pi].slice(0,ci)+'|';ci++;setTimeout(typeLoop,40);}else{wait=true;setTimeout(()=>{wait=false;fwd=false;typeLoop();},2400);}}else{if(ci>0){tel.textContent=phrases[pi].slice(0,ci)+'|';ci--;setTimeout(typeLoop,18);}else{pi=(pi+1)%phrases.length;fwd=true;setTimeout(typeLoop,400);}}}
+setTimeout(typeLoop,1200);
+
+const io=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('on'),i*60);io.unobserve(e.target);}});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+const sio=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.skb[data-w]').forEach(b=>{b.style.width=b.dataset.w+'%';});sio.unobserve(e.target);}});},{threshold:.2});
+document.querySelectorAll('.sk-panel').forEach(p=>sio.observe(p));
+function skTab(btn,id){document.querySelectorAll('.skt').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.sk-panel').forEach(p=>p.classList.remove('on'));btn.classList.add('on');const p=document.getElementById('sk-'+id);if(p){p.classList.add('on');setTimeout(()=>{p.querySelectorAll('.skb[data-w]').forEach(b=>{b.style.width=b.dataset.w+'%';});},60);}}
+
+function fProj(btn,tag){document.querySelectorAll('.pfb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.pc2').forEach(c=>{const m=tag==='all'||(c.dataset.tags||'').includes(tag);c.style.opacity=m?'1':'0.18';c.style.transform=m?'':'scale(.97)';});}
+
+document.querySelectorAll('.pc2').forEach(card=>{
+  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;card.style.transform='translateY(-6px) rotateY('+(x*8)+'deg) rotateX('+(-y*4)+'deg)';card.style.transition='none';});
+  card.addEventListener('mouseleave',()=>{card.style.transform='';card.style.transition='all .4s';});
+});
+
+function animCount(el,target,suffix,dur){let s=null;function step(ts){if(!s)s=ts;const p=Math.min((ts-s)/dur,1);el.textContent=Math.floor(p*target)+suffix;if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+const cio=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){animCount(document.getElementById('c1'),4,'',1000);animCount(document.getElementById('c2'),10,'K+',1400);cio.unobserve(e.target);}});},{threshold:.5});
+const c1=document.getElementById('c1');if(c1)cio.observe(c1.closest('.sbox'));
+
+const termCmds={
+  help:'Available commands:\n  about · skills · projects · contact · japanese · bat · secret · clear',
+  about:'ANAND SAUNDARYA — Data Analyst\nPune, Maharashtra, India\nB.Tech CSE, DBATU (2025)\nSeeking data roles in Japan\nJLPT N4 · English Business Level',
+  skills:'SQL/MySQL ████████░░ 88%\nPower BI  ████████░░ 85%\nExcel     ████████░░ 87%\nPython    ███████░░░ 72%\nGit       ██████░░░░ 68%',
+  projects:'[1] Global Tourism Dashboard — Power BI\n[2] Airline Booking Analysis — MySQL\n[3] CSN Air Quality Monitor — Python+BI\n[4] Spotify Trends Dashboard — Excel',
+  contact:'saundaryaanand2003@gmail.com\nlinkedin.com/in/anandsaundarya\ngithub.com/maianandhu\n@_anonymous_13s',
+  secret:'I am vengeance. I am the night.\nI am Batman.\n\n...also a data analyst from Pune.',
+  japanese:'日本語能力試験 N4 取得済。\n現在、N3に向けて勉強中！\n(JLPT N4 Certified. Currently studying for N3!)',
+  bat:'[BAT SIGNAL ACTIVATED] Gotham is safe.',
+  clear:'__clear__'
+};
+let termTyping = false;
+function termKey(e){
+  if(e.key==='Enter' && !termTyping){
+    const v=e.target.value.trim().toLowerCase();
+    e.target.value='';
+    const out=document.getElementById('term-out');
+    if(!v)return;
+    if(termCmds[v]==='__clear__'){out.textContent="Terminal cleared. Type 'help'.";return;}
+    
+    out.textContent = '';
+    const textToType = termCmds[v] || 'Command not found: '+v+"\nType 'help' for commands.";
+    let i = 0;
+    termTyping = true;
+    function typeWriter() {
+      if (i < textToType.length) {
+        out.textContent += textToType.charAt(i);
+        i++;
+        setTimeout(typeWriter, 15);
+      } else {
+        termTyping = false;
+      }
+    }
+    typeWriter();
+
+    // Easter Egg triggering your new local SVG
+    if(v==='bat'){
+        const bs=document.createElement('div');
+        bs.style.cssText='position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.92);z-index:3000;cursor:pointer;';
+        // Applying a CSS filter to turn your black SVG gold/yellow
+        bs.innerHTML='<img src="Images/batmanlogo.svg" style="width: 250px; filter: invert(65%) sepia(87%) saturate(382%) hue-rotate(5deg) brightness(98%) contrast(85%) drop-shadow(0px 0px 20px rgba(201, 168, 76, 0.5)); margin-bottom: 2rem;"><p style="font-family:\'Cinzel\',serif;font-size:18px;color:#c9a84c;letter-spacing:5px;">I AM VENGEANCE. I AM THE NIGHT.</p>';        bs.onclick=()=>bs.remove();
+        document.body.appendChild(bs);
+        setTimeout(()=>bs.remove(),3000);
+    }
+  }
+}
+
+function copyEmail(){navigator.clipboard.writeText('saundaryaanand2003@gmail.com').then(()=>{const b=document.getElementById('copyBtn');b.textContent='Copied ✓';b.style.background='#1a3a1a';b.style.color='#6aaa6a';setTimeout(()=>{b.textContent='Copy Email';b.style.background='';b.style.color='';},2000);});}
+
+window.addEventListener('scroll',()=>{document.getElementById('mainNav').style.borderBottomColor=window.scrollY>50?'var(--g3)':'var(--brd)';});
+
+let bc=0;
+document.getElementById('batLogo').addEventListener('click',()=>{
+    bc++;
+    if(bc>=3){
+        bc=0;
+        const bs=document.createElement('div');
+        bs.style.cssText='position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.92);z-index:3000;cursor:pointer;';
+        bs.innerHTML='<img src="Images/batmanlogo.svg" style="width: 250px; filter: invert(65%) sepia(87%) saturate(382%) hue-rotate(5deg) brightness(98%) contrast(85%) drop-shadow(0px 0px 20px rgba(201, 168, 76, 0.5)); margin-bottom: 2rem;"><p style="font-family:\'Cinzel\',serif;font-size:18px;color:#c9a84c;letter-spacing:5px;">I AM VENGEANCE. I AM THE NIGHT.</p>';
+        bs.onclick=()=>bs.remove();
+        document.body.appendChild(bs);
+        setTimeout(()=>bs.remove(),3000);
+    }
+});
+
+let mpExpanded=false;
+const audioEl=new Audio();let playlist=[],curIdx=0,playing=false;
+audioEl.volume=0.40;
+
+playlist = [
+  { 
+    name: "All The Stars", 
+    url: "songs/All The Stars - Music Video ｜ Black Panther ｜ Kendrick Lamar ｜ SZA ｜ Chadwick Boseman - CREATEANERA.mp3" 
+  },
+
+  { 
+    name: "What's Up Danger", 
+    url: "songs/Blackway & Black Caviar - ＂What's Up Danger＂ (Spider-Man： Into the Spider-Verse) [Official Audio] - Republic Records.mp3" 
+  },
+
+  { 
+    name: "Am I Dreaming", 
+    url: "songs/Metro Boomin, A$AP Rocky, Roisee - Am I Dreaming (Visualizer) - MetroBoominVEVO.mp3" 
+  },
+
+  { 
+    name: "Something In The Way", 
+    url: "songs/Nirvana – Something In The Way ｜ The Batman ｜ 2022 - Евгения.mp3" 
+  },
+
+  { 
+    name: "Sunflower", 
+    url: "songs/Post Malone, Swae Lee - Sunflower (Spider-Man： Into the Spider-Verse) - PostMaloneVEVO.mp3" 
+  },
+
+  { 
+    name: "Annihilate", 
+    url: "songs/Spider-Man： Across the Spider-Verse ｜ ＂Annihilate＂ by Metro Boomin x Swae Lee x Lil Wayne x Offset - Sony Pictures Animation.mp3" 
+  },
+
+  { 
+    name: "SUNFLOWER X AM I DREAMING", 
+    url: "songs/SUNFLOWER X AM I DREAMING - Noah.mp3" 
+  },
+
+  { 
+    name: "The Dark Knight Main Theme", 
+    url: "songs/The Dark Knight Main Theme - Hans Zimmer - Masisohanify.mp3" 
+  }
+];
+
+
+
+audioEl.addEventListener('timeupdate',()=>{if(audioEl.duration){const pct=(audioEl.currentTime/audioEl.duration)*100;document.getElementById('mp-progress').style.width=pct+'%';}});
+audioEl.addEventListener('ended',()=>nextTrack());
+
+function togglePlayer(){
+  mpExpanded=!mpExpanded;
+  const mp=document.getElementById('musicPlayer');
+  mp.classList.toggle('expanded',mpExpanded);
+  if(mpExpanded){
+    const toggle=document.getElementById('mp-toggle');
+    toggle.innerHTML='<span class="mp-title">🦇 Batcave Radio</span><span class="mp-close">✕</span>';
+    const close=toggle.querySelector('.mp-close');
+    close.onclick=(e)=>{e.stopPropagation();mpExpanded=false;mp.classList.remove('expanded');toggle.innerHTML='<div id="mp-icon" style="font-size: 1.4rem; animation: musicRainbow 4s linear infinite; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">🎵</div>';};
+    renderPlaylist(); // ensures the list shows if you hardcoded songs
+  }
+}
+function loadFiles(e){
+  const files=Array.from(e.target.files);
+  files.forEach(f=>{playlist.push({name:f.name.replace(/\.[^.]+$/,''),url:URL.createObjectURL(f)});});
+  renderPlaylist();
+  if(playlist.length===files.length)loadTrack(0);
+}
+function renderPlaylist(){
+  const pl=document.getElementById('mp-playlist');
+  const addBtn=pl.querySelector('.mp-add');
+  const hint=pl.querySelector('p');
+  pl.innerHTML='';
+  pl.appendChild(addBtn||createAddBtn());
+  if(hint)pl.appendChild(hint);
+  playlist.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.className='mp-song'+(i===curIdx&&playing?' active':'');
+    d.innerHTML='<span class="mp-song-num">'+(i+1)+'</span>'+t.name;
+    d.onclick=()=>loadTrack(i);
+    pl.appendChild(d);
+  });
+}
+function createAddBtn(){const d=document.createElement('div');d.className='mp-add';d.textContent='＋ Add songs from your device';d.onclick=()=>document.getElementById('mp-file').click();return d;}
+function loadTrack(i){curIdx=i;audioEl.src=playlist[i].url;document.getElementById('mp-track-name').textContent=playlist[i].name;document.getElementById('mp-artist').textContent='Track '+(i+1)+' of '+playlist.length;audioEl.play();playing=true;document.getElementById('mp-play-btn').textContent='⏸';renderPlaylist();}
+function togglePlay(){if(!playlist.length)return;if(playing){audioEl.pause();playing=false;document.getElementById('mp-play-btn').textContent='▶';}else{audioEl.play();playing=true;document.getElementById('mp-play-btn').textContent='⏸';}}
+function nextTrack(){if(!playlist.length)return;loadTrack((curIdx+1)%playlist.length);}
+function prevTrack(){if(!playlist.length)return;loadTrack((curIdx-1+playlist.length)%playlist.length);}
+function setVol(v){audioEl.volume=v;}
+function seekTrack(e){if(!audioEl.duration)return;const r=e.currentTarget.getBoundingClientRect();audioEl.currentTime=((e.clientX-r.left)/r.width)*audioEl.duration;}
+
+
+/* CANVAS GAME - Using your local SVG */
+let gameRunning=false,score=0,timeLeft=30,level=1,targets=[],gameInterval,timerInterval;
+const gc=document.getElementById('gameCanvas');const gctx=gc.getContext('2d');
+
+// Loading your batmanlogo.svg into Javascript to use on the canvas
+const batImg = new Image();
+batImg.src = 'Images/batmanlogo.svg';
+
+function drawBat(x,y,w,h,a){
+  gctx.save();
+  gctx.globalAlpha=a;
+  
+  // Note: If your SVG is completely black, it will show up black on a black canvas!
+  // If you can't see the targets, open batmanlogo.svg in a text editor and change fill="black" to fill="#c9a84c"
+  gctx.drawImage(batImg, x, y, w, h);
+  
+  gctx.restore();
+}
+
+function spawnTarget(){const w=40+Math.random()*20;const h=w*.6;targets.push({x:Math.random()*(700-w),y:Math.random()*(280-h),w,h,spd:(1+level*.4)*(Math.random()>.5?1:-1),vy:(Math.random()-.5)*1.5,hit:false});}
+function gameLoop(){gctx.clearRect(0,0,700,300);gctx.fillStyle='#040406';gctx.fillRect(0,0,700,300);targets.forEach(t=>{if(!t.hit){t.x+=t.spd;t.y+=t.vy;if(t.x<0||t.x+t.w>700)t.spd*=-1;if(t.y<0||t.y+t.h>290)t.vy*=-1;drawBat(t.x,t.y,t.w,t.h,1);}});gctx.fillStyle='rgba(201,168,76,.3)';gctx.font='12px Orbitron,monospace';gctx.textAlign='right';gctx.fillText('CLICK THE ANOMALIES!',690,20);}
+function startGame(){if(gameRunning)return;gameRunning=true;score=0;timeLeft=30;level=1;targets=[];['gscore','gtime','glvl'].forEach((id,i)=>{document.getElementById(id).textContent=[0,30,1][i];});document.getElementById('gameMsg').textContent='';document.getElementById('gameBtn').style.display='none';for(let i=0;i<4;i++)spawnTarget();gameInterval=setInterval(()=>{gameLoop();if(targets.filter(t=>!t.hit).length<3)spawnTarget();},50);timerInterval=setInterval(()=>{timeLeft--;document.getElementById('gtime').textContent=timeLeft;if(timeLeft%10===0&&timeLeft>0){level++;document.getElementById('glvl').textContent=level;spawnTarget();spawnTarget();}if(timeLeft<=0)endGame();},1000);}
+function endGame(){clearInterval(gameInterval);clearInterval(timerInterval);gameRunning=false;gctx.fillStyle='#040406';gctx.fillRect(0,0,700,300);gctx.fillStyle='#c9a84c';gctx.font='700 26px Cinzel,serif';gctx.textAlign='center';gctx.fillText('CLEANING COMPLETE',350,120);gctx.font='16px Orbitron,monospace';gctx.fillText('Outliers Removed: '+score,350,158);const g=score>=30?'BATMAN':score>=20?'ROBIN':score>=10?'COMMISSIONER':'ALFRED';gctx.font='14px Cinzel,serif';gctx.fillText('Data Rank: '+g,350,190);document.getElementById('gameMsg').textContent=score>=30?'Perfect dataset. You are the Dark Knight.':'Training continues...';const btn=document.getElementById('gameBtn');btn.style.display='block';btn.textContent='CLEAN AGAIN';}
+gc.addEventListener('click',e=>{if(!gameRunning)return;const r=gc.getBoundingClientRect();const mx=(e.clientX-r.left)*(700/r.width);const my=(e.clientY-r.top)*(300/r.height);targets.forEach(t=>{if(!t.hit&&mx>t.x&&mx<t.x+t.w&&my>t.y&&my<t.y+t.h){t.hit=true;score++;document.getElementById('gscore').textContent=score;spawnExp(e.clientX,e.clientY);}});});
+gctx.fillStyle='#040406';gctx.fillRect(0,0,700,300);gctx.fillStyle='rgba(201,168,76,.3)';gctx.font='14px Cinzel,serif';gctx.textAlign='center';gctx.fillText('Click START TRAINING to begin',350,155);
+// Auto-flip the hero image every 5 seconds (5000 milliseconds)
+setInterval(() => {
+  const flipInner = document.querySelector('.flip-inner');
+  if (flipInner) {
+    flipInner.classList.toggle('auto-flip');
+  }
+}, 5000);
+</script>
+</body>
+</html>
