@@ -205,7 +205,7 @@ section{padding:6rem 3rem;position:relative;z-index:5;}
 .contact-section{background:var(--drk);}
 .connect-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;max-width:700px;margin:0 auto;}
 .connect-card{background:var(--srf);border:1px solid var(--brd);padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:flex-start;gap:.8rem;text-decoration:none;transition:all .3s;position:relative;overflow:hidden;}
-.connect-card::before{content:'absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g3),transparent);transform:scaleX(0);transition:transform .4s;}
+.connect-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--g3),transparent);transform:scaleX(0);transition:transform .4s;}
 .connect-card:hover{border-color:var(--g);transform:translateY(-4px);}
 .connect-card:hover::before{transform:scaleX(1);}
 .cc-icon{font-size:1.6rem;filter:grayscale(1) brightness(1.5);}
@@ -237,32 +237,6 @@ footer p{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;c
 #typed{opacity:0;animation:fadeUp .7s .8s both;}
 .hbtns{opacity:0;animation:fadeUp .7s 1s both;}
 .flip-wrap{opacity:0;animation:fadeUp .9s .1s both;}
-
-/* --- BAT-LOGO OVERRIDE --- */
-/* Bypasses local file blocks and displays the colored SVG */
-#intro-bat, .bat-ico, #mp-bat, .pv-bat, .titem::before {
-  -webkit-mask: none !important;
-  mask: none !important;
-  background: var(--bat-svg) no-repeat center / contain !important;
-}
-
-/* Size adjustments to make the new colored logo visible */
-.bat-ico { 
-  width: 70px !important; 
-  height: 40px !important; 
-} /* Nav & Footer */
-
-#mp-bat { 
-  width: 500px !important; 
-  height: 340px !important; 
-} /* Music Player */
-
-.titem::before { 
-  width: 20px !important; 
-  height: 20px !important; 
-  left: -1.2rem !important; /* Re-centers the bigger dot on the timeline */
-  top: 0.2rem !important; 
-} /* Timeline Icons */
 
 /* --- RAINBOW MUSIC ICON --- */
 @keyframes musicRainbow {
