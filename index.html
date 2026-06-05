@@ -362,7 +362,7 @@ footer p{font-family:'Orbitron',monospace;font-size:.48rem;letter-spacing:.2em;c
       <button class="mp-btn" onclick="prevTrack()" title="Previous">⏮</button>
       <button class="mp-btn play" id="mp-play-btn" onclick="togglePlay()">▶</button>
       <button class="mp-btn" onclick="nextTrack()" title="Next">⏭</button>
-      <input type="range" min="0" max="1" step="0.05" value="0.7" id="mp-vol" oninput="setVol(this.value)" style="width:60px;"/>
+      <input type="range" min="0" max="1" step="0.05" value="0.8" id="mp-vol" oninput="setVol(this.value)" style="width:60px;"/>
     </div>
     <div id="mp-playlist">
       <div class="mp-add" onclick="document.getElementById('mp-file').click()">
@@ -850,7 +850,7 @@ document.getElementById('batLogo').addEventListener('click',()=>{
 
 let mpExpanded=false;
 const audioEl=new Audio();let playlist=[],curIdx=0,playing=false;
-audioEl.volume=0.40;
+audioEl.volume=0.80;
 
 playlist = [
   { 
